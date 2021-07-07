@@ -60,6 +60,7 @@ $(function () {
                 'password': password,
                 'auto_login': $('#remember').prop('checked')
             },
+            //TODO:账号登录逻辑修改
             success: function (data) {
                 if (data === 'success') {
                     loginBtn.popover('dispose').popover({
@@ -83,15 +84,40 @@ $(function () {
                     }, 500);
                 } else {
                     loginBtn.removeAttr('disabled');
-                    loginBtn.popover('dispose').popover({
-                        offset: '0,10',
-                        content: '用户名或密码错误',
-                        placement: 'left',
-                        trigger: 'manual'
-                    });
-                    loginBtn.popover('show');
-                    $('.popover').removeClass('popover-danger-top')
-                        .addClass('popover-danger popover-danger-left');
+                    if (data == "fail") {
+                        loginBtn.popover('dispose').popover({
+                            offset: '0,10',
+                            content: '用户名不存在',
+                            placement: 'left',
+                            trigger: 'manual'
+                        });
+                        loginBtn.popover('show');
+                        $('.popover').removeClass('popover-danger-top')
+                            .addClass('popover-danger popover-danger-left');
+                    } else {
+                        let count = data.charAt(5) - '0';
+                        if (count < 5) {
+                            loginBtn.popover('dispose').popover({
+                                offset: '0,10',
+                                content: '密码错误！您还有' + (5 - count) + "次机会！",
+                                placement: 'left',
+                                trigger: 'manual'
+                            });
+                            loginBtn.popover('show');
+                            $('.popover').removeClass('popover-danger-top')
+                                .addClass('popover-danger popover-danger-left');
+                        } else {
+                            loginBtn.popover('dispose').popover({
+                                offset: '0,10',
+                                content: "账号已锁定！",
+                                placement: 'left',
+                                trigger: 'manual'
+                            });
+                            loginBtn.popover('show');
+                            $('.popover').removeClass('popover-danger-top')
+                                .addClass('popover-danger popover-danger-left');
+                        }
+                    }
                 }
             }
         });
