@@ -131,10 +131,9 @@
                         msg_id: msg_id,  // required only when updating message
                         type: msgType.val(),
                         headline: headline.val(),
-                        content: ue.getContent(),
+                        content: ue.getContentTxt(),
                         drafted: drafted ? 1 : 0
                     },
-					//TODO: 添加一个source字段用来标识是否是html源代码保存的。然后在后端通过该字段识别并过滤script脚本
                     success: function (data) {
                         if (data === 'permission_denied') {
                             bootbox.alert({title: '错误提示', message: '请先登录'});
