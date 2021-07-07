@@ -26,18 +26,30 @@ def login():
 
     # authenticate
     result = User.find_by_username(username)
-    if len(result) == 1 and password == result[0].password:
-        save_session(result[0])
-
-        resp = make_response('success')
-        # set cookies for automated login
-        if auto_login == 'true':
-            # cookies' max age is 1 month
-            resp.set_cookie('username', username, max_age=30 * 24 * 3600)
-            resp.set_cookie('password', password, max_age=30 * 24 * 3600)
-        return resp
-    else:
+    if len(result) != 1:
         return 'fail'
+    else:
+        # failed over 5 times
+        if result[0].failed_counter == 5:
+            return 'fail_5'
+
+        elif password == result[0].password:
+            save_session(result[0])
+
+            resp = make_response('success')
+            # set cookies for automated login
+            if auto_login == 'true':
+                # cookies' max age is 1 month
+                resp.set_cookie('username', username, max_age=30 * 24 * 3600)
+                resp.set_cookie('password', password, max_age=30 * 24 * 3600)
+            User.login_count(username, False)
+            return resp
+        else:
+            cnt = result[0].failed_counter
+            if cnt < 5:
+                User.login_count(username, True)
+                cnt += 1
+            return f'fail_{cnt}'
 
 
 @auth.route('/logout')
