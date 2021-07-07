@@ -9,6 +9,7 @@ class User(Base):
     avatar = db.Column(db.String(50), nullable=False, server_default=db.text("'default.png'"))
     email = db.Column(db.String(50))
     role = db.Column(db.String(10), nullable=False, server_default=db.text("'user'"))
+    failed_counter = db.Column(db.Integer, nullable=False)
 
     @staticmethod
     def find_by_username(username):
@@ -68,3 +69,15 @@ class User(Base):
     def count_fuzzy_result(f_nickname):
         """return the number of records that satisfy the fuzzy search condition"""
         return User.query.filter(User.nickname.like(f_nickname)).count()
+
+
+    @staticmethod
+    def login_count(username, failed: bool):
+        # 对username匹配的用户的failed_counter字段加1或清0
+        user = db.session.query(User).filter(User.username == username).first()
+        if failed:
+            # counter++
+            user.failed_counter += 1
+        else:
+            user.failed_counter = 0
+        db.session.commit()
