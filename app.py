@@ -1,8 +1,9 @@
-from flask import Flask, session, request, render_template, redirect
+from flask import Flask, session, request, render_template, redirect, send_from_directory, abort
 
 from common import save_session, get_summary, type_to_str, startsWithList
 from controller import auth, ueditor, message, comment, profile, search
 from model import User, init_db
+import os
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -39,6 +40,17 @@ def page_not_found(err):
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+
+@app.route('/download-file/<path:file_path>')
+def download_avatar(file_path):
+    dir_name = os.path.dirname(file_path)
+    file_name = file_path[len(dir_name):].strip('/')
+    print(dir_name, file_name)
+    if dir_name != 'img':
+        abort(404)
+    else:
+        return send_from_directory(os.path.join('static', dir_name), filename=file_name, as_attachment=True)
 
 
 # register function for Jinja
