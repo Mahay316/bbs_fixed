@@ -1,6 +1,7 @@
 from common import flatten_double
 from flask import Blueprint, jsonify, session, request
 from model import Comment, Message
+from config import logger
 
 comment = Blueprint('comment', __name__)
 
@@ -9,6 +10,7 @@ comment = Blueprint('comment', __name__)
 def post_comment():
     """post new comment"""
     if session.get('user_id') is None:
+        logger.info("未在登陆状态")
         return 'permission-denied'
 
     msg_id = request.form.get('msg_id')
@@ -17,6 +19,7 @@ def post_comment():
     reply_to_id = request.form.get('reply_to_id')
     # parameter check
     if not (msg_id and content and reply_to and reply_to_id) or len(content) <= 0:
+        logger.info("输入信息非法")
         return 'invalid'
 
     try:
