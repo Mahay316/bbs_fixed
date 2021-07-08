@@ -2,6 +2,7 @@
 from common import save_session
 from flask import Blueprint, request, session, redirect, make_response, render_template
 from model import User, Message, Comment
+from config import logger
 
 auth = Blueprint('auth', __name__, template_folder='templates')
 
@@ -22,6 +23,7 @@ def login():
 
     # parameter not enough
     if not (username and password):
+        logger.info("非法输入的用户名密码")
         return 'invalid'
 
     # authenticate
@@ -30,6 +32,7 @@ def login():
         save_session(result[0])
 
         resp = make_response('success')
+        logger.info("用户登陆成功")
         # set cookies for automated login
         if auto_login == 'true':
             # cookies' max age is 1 month
@@ -50,7 +53,7 @@ def logout():
     # delete cookies for automated login
     resp.delete_cookie('username')
     resp.delete_cookie('password')
-
+    logger.info("用户登出")
     return resp
 
 
@@ -71,6 +74,7 @@ def register():
     # parameter not enough
     # password must be encrypted with MD5
     if not (username and nickname and password) or len(password) != 32:
+        logger.info("非法输入的用户名密码")
         return 'invalid'
 
     # username already exists
@@ -78,4 +82,5 @@ def register():
         return 'duplicated'
 
     User.do_register(username, nickname, password)
+    logger.info("用户注册成功")
     return 'success'

@@ -2,12 +2,14 @@
 from common import flatten_single, flatten_double
 from flask import Blueprint, render_template, jsonify, request
 from model import User, Message
+from config import logger
 
 search = Blueprint('search', __name__, template_folder='templates')
 
 
 @search.route('/search')
 def get_search_page():
+    logger.info("想赢Search页面")
     return render_template('search.html')
 
 

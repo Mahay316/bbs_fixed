@@ -24,6 +24,7 @@ def index():
 def post_message():
     # verbose check for security purpose, actually not necessary
     if session.get('isLogin') != 'true':
+        logger.info("未在登陆状态")
         return 'permission_denied'
 
     msg_type = request.form.get('type')
@@ -56,6 +57,7 @@ def post_message():
 @message.route('/message/toggle', methods=['POST'])
 def toggle_message():
     if session.get('isLogin') != 'true':
+        logger.info("未在登陆状态")
         return 'permission-denied'
 
     msg_id = request.form.get('msg_id')

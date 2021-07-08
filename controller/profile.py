@@ -2,13 +2,14 @@
 from common import endsWithList
 from flask import Blueprint, request, session, render_template
 from model import User, Comment, Message
-
+from config import logger
 profile = Blueprint('profile', __name__)
 
 
 @profile.route('/profile', methods=['GET'])
 def get_profile():
     if session.get('isLogin') != 'true':
+        logger.info("登陆状态异常")
         return 'permission-denied'
 
     try:
@@ -24,6 +25,7 @@ def get_profile():
 @profile.route('/profile/message/list/<int:page>')
 def get_message_list(page):
     if session.get('isLogin') != 'true':
+        logger.info("登陆状态异常")
         return 'permission-denied'
 
     try:
@@ -40,6 +42,7 @@ def get_message_list(page):
 @profile.route('/profile/comment/<int:page>')
 def get_comment(page):
     if session.get('isLogin') != 'true':
+        logger.info("登陆状态异常")
         return 'permission-denied'
 
     try:
@@ -56,6 +59,7 @@ def get_comment(page):
 @profile.route('/profile/reply/<int:page>')
 def get_reply(page):
     if session.get('isLogin') != 'true':
+        logger.info("登陆状态异常")
         return 'permission-denied'
 
     try:
@@ -72,6 +76,7 @@ def get_reply(page):
 @profile.route('/profile/avatar', methods=['POST'])
 def upload_avatar():
     if session.get('isLogin') != 'true':
+        logger.info("登陆状态异常")
         return 'permission-denied'
 
     img = request.files['avatar']
@@ -94,6 +99,7 @@ def upload_avatar():
 @profile.route('/profile', methods=['PUT'])
 def change_profile():
     if session.get('isLogin') != 'true':
+        logger.info("登陆状态异常")
         return 'permission-denied'
 
     # action -> nickname, password
